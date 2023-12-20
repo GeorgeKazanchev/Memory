@@ -1,14 +1,53 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8">
   <title>Игра Мемори</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="data.js"></script>
 </head>
+
 <body>
   <div id="root">Корневой элемент</div>
   <script type="text/babel">
     const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App images={images} visibleItems={visibleItems} finishedItems={finishedItems}/>);
+    
+    function Card({ url, description, isVisible, isFinished }) {
+      const className = `${isVisible ? "card-show" : ""} ${isFinished ? "card-finished" : ""}`;
+
+      return (
+        <li className={`card ${className}`}>
+          <img src={url} width="204" height="144" alt={description} />
+        </li>
+      );
+    }
+
+    function Grid({ images, visibleItems, finishedItems }) {
+      const cards = images.map((image) =>
+        <Card url={image.url} description={image.description} key={image.id}
+          isVisible={visibleItems.includes(image.id)} isFinished={finishedItems.includes(image.id)}/>
+      );
+
+      return (
+        <ul className="cards cards-theme-cars">
+            {cards}
+        </ul>
+      );
+    }
+
+    function App({images = [], visibleItems = [], finishedItems = []}) {
+      return (
+        <section className="game container">
+          <Grid images={images} visibleItems={visibleItems} finishedItems={finishedItems} />
+        </section>
+      );
+    }
   </script>
 </body>
 </html>
