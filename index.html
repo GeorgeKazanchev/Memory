@@ -16,22 +16,46 @@
   <script type="text/babel">
     const container = document.getElementById('root');
     const root = ReactDOM.createRoot(container);
-    root.render(<App images={images} visibleItems={visibleItems} finishedItems={finishedItems}/>);
+    root.render(<App images={images}/>);
     
-    function Card({ url, description, isVisible, isFinished }) {
-      const className = `${isVisible ? "card-show" : ""} ${isFinished ? "card-finished" : ""}`;
+    function App({images = []}) {
+      const [steps, setSteps] = React.useState(0);
 
+      const incrementCounter = () => {
+        setSteps((steps) => steps + 1);
+      };
+      
       return (
-        <li className={`card ${className}`}>
-          <img src={url} width="204" height="144" alt={description} />
-        </li>
+        <section className="game container">
+          <StepsCounter steps={steps} />
+          <Grid images={images} incrementCounter={incrementCounter} />
+        </section>
       );
     }
 
-    function Grid({ images, visibleItems, finishedItems }) {
+    function StepsCounter({steps = 0}) {
+      return (
+        <div className="steps">Шаг {steps}</div>
+      );
+    }
+
+    function Grid({images, incrementCounter}) {
+      const finishedItems = [];
+      const [visibleItems, setVisibleItems] = React.useState([]);
+
+      const handleCardClick = (id) => {
+        setVisibleItems([...visibleItems, id]);
+        incrementCounter();
+      };
+
       const cards = images.map((image) =>
-        <Card url={image.url} description={image.description} key={image.id}
-          isVisible={visibleItems.includes(image.id)} isFinished={finishedItems.includes(image.id)}/>
+        <Card id={image.id} 
+          url={image.url} 
+          description={image.description} 
+          key={image.id}
+          isVisible={visibleItems.includes(image.id)} 
+          isFinished={finishedItems.includes(image.id)}
+          handleCardClick={handleCardClick}/>
       );
 
       return (
@@ -41,11 +65,21 @@
       );
     }
 
-    function App({images = [], visibleItems = [], finishedItems = []}) {
+    function Card({id, url, description, isVisible, isFinished, handleCardClick}) {
+      const className = `${isVisible ? "card-show" : ""} ${isFinished ? "card-finished" : ""}`;
+
+      const handleClick = () => {
+        if (isVisible || isFinished) {
+          return;
+        }
+
+        handleCardClick(id);
+      };
+
       return (
-        <section className="game container">
-          <Grid images={images} visibleItems={visibleItems} finishedItems={finishedItems} />
-        </section>
+        <li className={`card ${className}`} onClick={handleClick}>
+          <img src={url} width="204" height="144" alt={description} />
+        </li>
       );
     }
   </script>
