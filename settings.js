@@ -1,1 +1,1 @@
-const TIMEOUT = 800; // мс
+export const TIMEOUT = 800; // мс

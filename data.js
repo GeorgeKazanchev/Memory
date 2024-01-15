@@ -1,4 +1,4 @@
-const images = [{
+export const images = [{
   'id': 'YdAqiUkUoWA',
   'url': 'img/cats-1.jpg',
   'description': 'pink petaled flower',
