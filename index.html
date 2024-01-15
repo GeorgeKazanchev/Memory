@@ -9,6 +9,7 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <script src="data.js"></script>
+  <script src="settings.js"></script>
 </head>
 
 <body>
@@ -18,18 +19,81 @@
     const root = ReactDOM.createRoot(container);
     root.render(<App images={images}/>);
     
-    function App({images = []}) {
+    const useGame = (images) => {
       const [steps, setSteps] = React.useState(0);
+      const [finishedItems, setFinishedItems] = React.useState([]);
 
-      const incrementCounter = () => {
+      const checkItems = (firstItemId, secondItemId) => {
+        const firstItem = images.find((item) => item.id === firstItemId);
+        const secondItem = images.find((item) => item.id === secondItemId);
+
+        if (firstItem.url === secondItem.url) {
+          setFinishedItems([...finishedItems, firstItemId, secondItemId]);
+        }
+
         setSteps((steps) => steps + 1);
+      }
+
+      const handleReset = () => {
+        setSteps(0);
+        setFinishedItems([]);
+      }
+
+      const isWin = finishedItems.length === images.length;
+
+      return {
+        steps,
+        finishedItems,
+        isWin,
+        checkItems,
+        handleReset
       };
+    }
+
+    function App({images = []}) {
+      const {
+        steps,
+        finishedItems,
+        isWin,
+        checkItems,
+        handleReset
+      } = useGame(images);
+
+      return (
+        <React.Fragment>
+          <section className="game container">
+            <ProgressBar 
+              finishedItemsCount={finishedItems.length / 2} 
+              totalItemsCount={images.length / 2} />
+            <StepsCounter 
+              steps={steps} />
+            <Grid 
+              images={images}
+              finishedItems={finishedItems} 
+              checkItems={checkItems} />
+          </section>
+          {isWin && (
+            <Modal>
+              <h3 className="modal-caption">Победа!</h3>
+              <p className="modal-description">Вы собрали все пары за {steps} шагов</p>
+              <button className="button modal-button" type="button" onClick={handleReset}>Новая игра</button>
+            </Modal>
+          )}
+        </React.Fragment>
+      );
+    }
+
+    function ProgressBar({finishedItemsCount, totalItemsCount}) {
+      const width = finishedItemsCount / totalItemsCount * 100;
       
       return (
-        <section className="game container">
-          <StepsCounter steps={steps} />
-          <Grid images={images} incrementCounter={incrementCounter} />
-        </section>
+        <React.Fragment>
+          <div className="progress-wrapper">
+            <div className="progress" style={{width: `${width}%`}}></div>
+          </div>
+          <p className="progress-description">Открыто 
+            <span>{finishedItemsCount}</span> / <span>{totalItemsCount}</span></p>
+        </React.Fragment>
       );
     }
 
@@ -39,17 +103,27 @@
       );
     }
 
-    function Grid({images, incrementCounter}) {
-      const finishedItems = [];
+    function Grid({images, finishedItems, checkItems}) {
       const [visibleItems, setVisibleItems] = React.useState([]);
 
       const handleCardClick = (id) => {
-        setVisibleItems([...visibleItems, id]);
-        incrementCounter();
+        switch(visibleItems.length) {
+          case 0:
+            setVisibleItems([id]);
+            break;
+          case 1:
+            setVisibleItems([...visibleItems, id]);
+            checkItems(visibleItems[0], id);
+            setTimeout(() => setVisibleItems([]), TIMEOUT);
+            break;
+          default:
+            setVisibleItems([]);
+        }
       };
 
       const cards = images.map((image) =>
-        <Card id={image.id} 
+        <Card 
+          id={image.id} 
           url={image.url} 
           description={image.description} 
           key={image.id}
@@ -80,6 +154,16 @@
         <li className={`card ${className}`} onClick={handleClick}>
           <img src={url} width="204" height="144" alt={description} />
         </li>
+      );
+    }
+
+    function Modal({children}) {
+      return (
+        <div className="modal">
+          <div className="modal-box">
+            {children}
+          </div>
+        </div>
       );
     }
   </script>

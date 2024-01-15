@@ -1,0 +1,1 @@
+const TIMEOUT = 800; // мс
