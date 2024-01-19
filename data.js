@@ -47,3 +47,9 @@ export const images = [{
   'url': 'img/cats-6.jpg',
   'description': 'white and purple flower petals',
 }];
+
+export const results = [
+  { name: 'Аня', steps: 16 },
+  { name: 'Вася', steps: 12 },
+  { name: 'Петя', steps: 19 }
+];

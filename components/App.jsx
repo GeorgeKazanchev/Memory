@@ -1,39 +1,36 @@
 import React from 'react';
-import ProgressBar from './ProgressBar.jsx';
-import StepsCounter from './StepsCounter.jsx';
-import Grid from './Grid.jsx';
-import Modal from './Modal.jsx';
-import { useGame } from '../game-logic.jsx';
+import GamePage from './GamePage.jsx';
+import ResultsPage from './ResultsPage.jsx';
+import { AppRoute } from '../settings.js';
 
-export default function App({images = []}) {
-    const {
-      steps,
-      finishedItems,
-      isWin,
-      checkItems,
-      handleReset
-    } = useGame(images);
+export default function App({ images = [], results = [] }) {
+  const [activePage, setActivePage] = React.useState(AppRoute.Game);
+  const [result, setResult] = React.useState(0);
 
-    return (
-      <React.Fragment>
-        <section className="game container">
-          <ProgressBar 
-            finishedItemsCount={finishedItems.length / 2} 
-            totalItemsCount={images.length / 2} />
-          <StepsCounter 
-            steps={steps} />
-          <Grid 
-            images={images}
-            finishedItems={finishedItems} 
-            checkItems={checkItems} />
-        </section>
-        {isWin && (
-          <Modal>
-            <h3 className="modal-caption">Победа!</h3>
-            <p className="modal-description">Вы собрали все пары за {steps} шагов</p>
-            <button className="button modal-button" type="button" onClick={handleReset}>Новая игра</button>
-          </Modal>
-        )}
-      </React.Fragment>
-    );
+  const handleShowResults = (result) => {
+    setResult(result);
+    setActivePage(AppRoute.Results);
+  };
+
+  const handleStartNewGame = () => {
+    setActivePage(AppRoute.Game);
+  };
+
+  const getPage = (activePage) => {
+    switch (activePage) {
+      case AppRoute.Game:
+        return <GamePage
+          images={images}
+          onShowResults={handleShowResults} />
+      case AppRoute.Results:
+        return <ResultsPage
+          results={results}
+          currentResult={result}
+          onStartNewGame={handleStartNewGame} />
+      default:
+        return null;
+    }
+  };
+
+  return getPage(activePage);
 }
