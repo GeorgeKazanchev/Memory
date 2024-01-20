@@ -88,9 +88,18 @@ export const results = [
   { name: 'Петя', steps: 19 }
 ];
 
+const shuffle = (array) => {
+  for (let i = array.length - 1; i > 0; --i) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
+};
+
 export const getImages = (type) => {
   const sortedImages = RANDOMIZED 
-    ? [...imageCollection[type]].sort(() => Math.random() - 0.5) 
+    ? shuffle([...imageCollection[type]]) 
     : [...imageCollection[type]];
 
   return sortedImages
