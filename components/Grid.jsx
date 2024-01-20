@@ -2,7 +2,7 @@ import React from 'react';
 import Card from './Card.jsx';
 import {TIMEOUT} from '../settings.js';
 
-export default function Grid({images, finishedItems, checkItems}) {
+export default function Grid({images, finishedItems, cardType, checkItems}) {
     const [visibleItems, setVisibleItems] = React.useState([]);
 
     const handleCardClick = (id) => {
@@ -32,7 +32,7 @@ export default function Grid({images, finishedItems, checkItems}) {
     );
 
     return (
-      <ul className="cards cards-theme-cars">
+      <ul className={`cards cards-theme-${cardType}`}>
           {cards}
       </ul>
     );

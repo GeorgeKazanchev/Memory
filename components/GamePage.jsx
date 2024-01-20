@@ -5,7 +5,7 @@ import Grid from './Grid.jsx';
 import Modal from './Modal.jsx';
 import { useGame } from '../game-logic.jsx';
 
-export default function GamePage({ images, onShowResults }) {
+export default function GamePage({ images, cardType, onShowResults }) {
     const {
         steps,
         finishedItems,
@@ -28,13 +28,14 @@ export default function GamePage({ images, onShowResults }) {
                 <Grid
                     images={images}
                     finishedItems={finishedItems}
+                    cardType={cardType}
                     checkItems={checkItems} />
             </section>
             {isWin && (
                 <Modal>
                     <h3 className="modal-caption">Победа!</h3>
-                    <p className="modal-description">Вы собрали все пары за {steps} шагов</p>
-                    <button className="button modal-button" type="button" onClick={handleShowResults}>Результаты</button>
+                    <p className="modal-description">Теперь давайте узнаем результаты этой партии</p>
+                    <button className="button modal-button" type="button" onClick={handleShowResults}>Показать результаты</button>
                 </Modal>
             )}
         </React.Fragment>
