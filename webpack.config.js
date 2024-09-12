@@ -8,10 +8,10 @@ const webpackConfig = {
     entry: "./index.jsx",
     output: {
         filename: "bundle.js",
-        path: path.join(__dirname)
+        path: path.join(__dirname, 'build')
     },
     devServer: {
-        static: path.join(__dirname),
+        static: path.join(__dirname, 'build'),
         open: true,
         port: 44402
     },
